@@ -14,15 +14,13 @@ import {
     useTheme,
 } from '@mui/material';
 import { AxiosError } from 'axios';
-import moment from 'moment';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { DeleteModal } from '../../components/DeleteModal/DeleteModal';
-import { GET_SCHEDULE_LIST_KEY, deleteSchedule, getScheduleList } from '../../services/Schedule/ScheduleService';
-import { TimeSlotString } from '../../services/Schedule/ScheduleService.schema';
-import { GET_WORKSTATION_LIST_KEY, getWorkstationList } from '../../services/Workstation/WorkstationService';
+import { GET_WORKSTATION_LIST_KEY, deleteWorkstation, getWorkstationList } from '../../services/Workstation/WorkstationService';
+import { AvailabilityStatusString } from '../../services/Workstation/WorkstationService.schema';
 
 type DeleteModalIsOpen =
     | {
@@ -40,26 +38,14 @@ const sortDateFn = (a: string, b: string) => {
     return dateA - dateB;
 };
 
-export const ScheduleList = () => {
+export const WorkstationList = () => {
     const [deleteModalState, setDeleteModalState] = useState<DeleteModalIsOpen>({ isOpen: false, id: undefined });
 
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
-    const scheduleListQuery = useQuery({
-        queryKey: [GET_SCHEDULE_LIST_KEY],
-        queryFn: async () => await getScheduleList(),
-        onError: (error: AxiosError) => {
-            const message = (
-                <div style={{ whiteSpace: 'pre-line' }}>
-                    {`Ocorreu um erro:
-                    ${error.message}`}
-                </div>
-            );
-            toast.error(message);
-        },
-    });
+
     const workstationListQuery = useQuery({
         queryKey: [GET_WORKSTATION_LIST_KEY],
         queryFn: async () => await getWorkstationList(),
@@ -73,34 +59,30 @@ export const ScheduleList = () => {
             toast.error(message);
         },
     });
-    const deleteScheduleMutation = useMutation({
-        mutationFn: (id: number) => deleteSchedule(id),
+    const deleteWorkstationMutation = useMutation({
+        mutationFn: (id: number) => deleteWorkstation(id),
         onSuccess: () => {
-            queryClient.invalidateQueries(GET_SCHEDULE_LIST_KEY);
-            toast.success('Agendamento removido!');
+            queryClient.invalidateQueries(GET_WORKSTATION_LIST_KEY);
+            toast.success('Estação de trabalho removida!');
         },
         onError: () => {
-            toast.error('Falha ao remover agendamento.');
+            toast.error('Falha ao remover estação de trabalho.');
         },
     });
-    const scheduleSortedItems = scheduleListQuery.data?.data.sort((scheduleA, scheduleB) =>
-        sortDateFn(scheduleA.schedule_date, scheduleB.schedule_date)
-    );
-    const workstationItems = workstationListQuery.data?.data;
+    const workstationSortedItems = workstationListQuery.data?.data.sort((a, b) => a.workstation_name.localeCompare(b.workstation_name));
     const smallTable = (
         <TableContainer component={Paper}>
             <Table aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>Data</TableCell>
-                        <TableCell align="right">Funcionário</TableCell>
-                        <TableCell align="right">Estação</TableCell>
+                        <TableCell>Estação de trabalho</TableCell>
+                        <TableCell align="right">Status</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {scheduleSortedItems?.map((schedule) => (
+                    {workstationSortedItems?.map((workstation) => (
                         <TableRow
-                            key={schedule.schedule_id}
+                            key={workstation.workstation_id}
                             sx={(theme) => ({
                                 cursor: 'pointer',
                                 '&:last-child td, &:last-child th': { border: 0 },
@@ -110,18 +92,13 @@ export const ScheduleList = () => {
                                 },
                             })}
                             onClick={() => {
-                                navigate(`/schedule/${schedule.schedule_id}/edit`);
+                                navigate(`/workstation/${workstation.workstation_id}/edit`);
                             }}
                         >
                             <TableCell component="th" scope="row">
-                                {moment(schedule.schedule_date).format('DD/MM/YYYY')} <br />
-                                {TimeSlotString[schedule.time_slot]}
+                                {workstation.workstation_name}
                             </TableCell>
-                            <TableCell align="right">{schedule.employee_name}</TableCell>
-                            <TableCell align="right">
-                                {workstationItems?.find((workstation) => workstation.workstation_id === schedule.workstation_id)
-                                    ?.workstation_name ?? schedule.workstation_id}
-                            </TableCell>
+                            <TableCell align="right">{AvailabilityStatusString[workstation.availability_status]}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -133,33 +110,23 @@ export const ScheduleList = () => {
             <Table aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>Data</TableCell>
-                        <TableCell align="right">Período</TableCell>
-                        <TableCell align="right">Funcionário</TableCell>
-                        <TableCell align="right" sx={{ minWidth: 120 }}>
-                            Estação de trabalho
-                        </TableCell>
-                        <TableCell align="right" sx={{ minWidth: 120 }}></TableCell>
+                        <TableCell>Estação de trabalho</TableCell>
+                        <TableCell align="right">Status</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {scheduleSortedItems?.map((schedule) => (
-                        <TableRow key={schedule.schedule_id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    {workstationSortedItems?.map((workstation) => (
+                        <TableRow key={workstation.workstation_id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                             <TableCell component="th" scope="row">
-                                {moment(schedule.schedule_date).format('DD/MM/YYYY')}
+                                {workstation.workstation_name}
                             </TableCell>
-                            <TableCell align="right">{TimeSlotString[schedule.time_slot]}</TableCell>
-                            <TableCell align="right">{schedule.employee_name}</TableCell>
-                            <TableCell align="right">
-                                {workstationItems?.find((workstation) => workstation.workstation_id === schedule.workstation_id)
-                                    ?.workstation_name ?? schedule.workstation_id}
-                            </TableCell>
+                            <TableCell align="right">{AvailabilityStatusString[workstation.availability_status]}</TableCell>
                             <TableCell align="right">
                                 <IconButton
                                     aria-label="delete"
                                     color="info"
                                     onClick={() => {
-                                        navigate(`/schedule/${schedule.schedule_id}/edit`);
+                                        navigate(`/workstation/${workstation.workstation_id}/edit`);
                                     }}
                                 >
                                     <Edit />
@@ -168,7 +135,7 @@ export const ScheduleList = () => {
                                     aria-label="delete"
                                     color="error"
                                     onClick={() => {
-                                        setDeleteModalState({ isOpen: true, id: Number(schedule.schedule_id) });
+                                        setDeleteModalState({ isOpen: true, id: Number(workstation.workstation_id) });
                                     }}
                                 >
                                     <Delete />
@@ -180,14 +147,14 @@ export const ScheduleList = () => {
             </Table>
         </TableContainer>
     );
-    return scheduleSortedItems && workstationItems ? (
+    return workstationSortedItems ? (
         <>
             <DeleteModal
-                title="Apagar agendamento?"
+                title="Apagar estação de trabalho?"
                 open={deleteModalState.isOpen}
                 onClose={() => setDeleteModalState({ isOpen: false, id: undefined })}
                 onDelete={() => {
-                    deleteScheduleMutation.mutate(deleteModalState.id as number);
+                    deleteWorkstationMutation.mutate(deleteModalState.id as number);
                     setDeleteModalState({ isOpen: false, id: undefined });
                 }}
             />
