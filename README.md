@@ -54,7 +54,7 @@ O projeto utiliza como base o [Vite | Next Generation Frontend Tooling](https://
 
 No diretório do projeto:
 
-1. Execute `npm install` no diretório do projeto.
+1. Execute: `npm install`
 
 Se você estiver utilizando Visual Studio Code, poderá utilizar o devcontainer existente no projeto, que oferece um `node` próprio que funciona sem problemas em qualquer máquina.
 
@@ -64,7 +64,7 @@ O projeto utiliza como base o [Vite | Next Generation Frontend Tooling](https://
 
 No diretório do projeto:
 
-1. Execute `npm run dev`.  
+1. Execute `npm run dev`  
 A aplicação estará rodando em <http://localhost:5173/>.
 
 Se você estiver utilizando Visual Studio Code, há configuração para automatizar o processo, basta executar o projeto via:
