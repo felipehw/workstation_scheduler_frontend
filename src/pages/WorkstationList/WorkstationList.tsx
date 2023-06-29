@@ -161,7 +161,7 @@ export const WorkstationList = () => {
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <Typography variant="h5" mb={2}>
-                        Agendamentos
+                        Estações de trabalho
                     </Typography>
                     {isSmallScreen ? smallTable : table}
                 </Grid>
