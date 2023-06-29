@@ -3,6 +3,14 @@ import { ptBR } from '@mui/material/locale';
 
 export const theme = createTheme(
     {
+        palette: {
+            text: {
+                primary: '#333333',
+            },
+            primary: {
+                main: '#6482f8',
+            },
+        },
         typography: {
             // fontFamily: 'Inter',
         },

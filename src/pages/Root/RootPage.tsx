@@ -15,6 +15,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
+import guillePurple from '../../assets/guille_purple.svg';
+import logo from '../../assets/logo_white.svg';
 
 const drawerWidth = 240;
 
@@ -28,7 +30,9 @@ export const RootPage = () => {
 
     const drawer = (
         <div>
-            <Toolbar />
+            <Toolbar>
+                <img src={guillePurple} alt="Logo" height="40px" />
+            </Toolbar>
             <Divider />
             <List>
                 <ListItem>
@@ -99,16 +103,18 @@ export const RootPage = () => {
                     <Typography variant="h6" noWrap component="div">
                         Sistema de agendamento
                     </Typography>
+                    <Box sx={{ ml: 2, display: { sm: 'none' }, position: 'relative', top: '3px' }}>
+                        <img src={logo} alt="Logo" height="40px" />
+                    </Box>
                 </Toolbar>
             </AppBar>
             <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }} aria-label="mailbox folders">
-                {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Drawer
                     variant="temporary"
                     open={mobileOpen}
                     onClose={handleDrawerToggle}
                     ModalProps={{
-                        keepMounted: true, // Better open performance on mobile.
+                        keepMounted: true,
                     }}
                     sx={{
                         display: { xs: 'block', sm: 'none' },
