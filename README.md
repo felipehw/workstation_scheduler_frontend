@@ -52,7 +52,9 @@
 
 O projeto utiliza como base o [Vite | Next Generation Frontend Tooling](https://vitejs.dev/), basta seguir as suas convenções.
 
-Para instalar, execute `npm install` no diretório do projeto.
+No diretório do projeto:
+
+1. Execute `npm install` no diretório do projeto.
 
 Se você estiver utilizando Visual Studio Code, poderá utilizar o devcontainer existente no projeto, que oferece um `node` próprio que funciona sem problemas em qualquer máquina.
 
@@ -60,8 +62,10 @@ Se você estiver utilizando Visual Studio Code, poderá utilizar o devcontainer 
 
 O projeto utiliza como base o [Vite | Next Generation Frontend Tooling](https://vitejs.dev/), basta seguir as suas convenções.
 
-Execute `npm run dev` no diretório do projeto.  
-A aplicação estará rodando em <http://127.0.0.1:5173/>.
+No diretório do projeto:
+
+1. Execute `npm run dev`.  
+A aplicação estará rodando em <http://localhost:5173/>.
 
 Se você estiver utilizando Visual Studio Code, há configuração para automatizar o processo, basta executar o projeto via:
 
